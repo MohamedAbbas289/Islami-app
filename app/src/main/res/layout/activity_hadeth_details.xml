@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/default_bg"
+    tools:context=".ui.home.tabs.hadeth.HadethDetailsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:elevation="0dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/back_arrow" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/el_messiri"
+                android:text="Islami"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <View
+        android:id="@+id/white_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#CCFFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar"
+        app:layout_constraintWidth_percent="0.9" />
+
+    <TextView
+        android:id="@+id/hadeth_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/monotype_koufi"
+        android:text="الحديث الاول"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/white_background"
+        app:layout_constraintStart_toStartOf="@id/white_background"
+        app:layout_constraintTop_toTopOf="@id/white_background" />
+
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="@id/white_background"
+        app:layout_constraintStart_toStartOf="@id/white_background"
+        app:layout_constraintTop_toBottomOf="@id/hadeth_name"
+        app:layout_constraintWidth_percent="0.7" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/white_background"
+        app:layout_constraintEnd_toEndOf="@id/white_background"
+        app:layout_constraintStart_toStartOf="@id/white_background"
+        app:layout_constraintTop_toBottomOf="@id/line">
+
+        <TextView
+            android:id="@+id/hadeth_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="30dp"
+            android:fontFamily="@font/decotype_thuluth"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@id/white_background"
+            app:layout_constraintEnd_toEndOf="@id/white_background"
+            app:layout_constraintStart_toStartOf="@id/white_background"
+            app:layout_constraintTop_toBottomOf="@id/line"
+            tools:text="@string/hadeth_example" />
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
