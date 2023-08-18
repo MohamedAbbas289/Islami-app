@@ -1,6 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    tools:background="@drawable/default_bg">
+
+    <ImageView
+        android:id="@+id/radio_img"
+        android:layout_width="match_parent"
+        android:layout_height="222dp"
+        android:src="@drawable/radio_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.35" />
+
+    <TextView
+        android:id="@+id/tv_radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="59dp"
+        android:fontFamily="@font/el_messiri"
+        android:text="إذاعة القرآن الكريم"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/radio_img" />
+
+    <ImageView
+        android:layout_width="31dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="65dp"
+        android:src="@drawable/radio_play"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_radio" />
+
+    <ImageView
+        android:layout_width="31dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="65dp"
+        android:src="@drawable/radio_skip_next"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_radio" />
+
+    <ImageView
+        android:layout_width="31dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="65dp"
+        android:src="@drawable/radio_skip_previous"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_radio" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
