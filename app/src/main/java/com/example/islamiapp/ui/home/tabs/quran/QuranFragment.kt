@@ -148,8 +148,8 @@ class QuranFragment : Fragment() {
         adapter.onItemClickListener = ChapterNamesAdapter.OnItemClickListener { position, name ->
             //start sura details activity and send chapter name and position
             val intent = Intent(context, SuraDetailsActivity::class.java)
-            intent.putExtra(Constants.EXTRA_CHAPTER_INDEX, name)
-            intent.putExtra(Constants.EXTRA_CHAPTER_NAME, position)
+            intent.putExtra(Constants.EXTRA_CHAPTER_NAME, name)
+            intent.putExtra(Constants.EXTRA_CHAPTER_INDEX, position)
             startActivity(intent)
 
         }

@@ -10,7 +10,7 @@ import java.io.IOException
 class SuraDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySuraDetailsBinding
     private lateinit var adapter: ChapterContentAdapter
-    private var contents: ArrayList<String> = ArrayList()
+    private var contents: List<String> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySuraDetailsBinding.inflate(layoutInflater)
@@ -32,7 +32,8 @@ class SuraDetailsActivity : AppCompatActivity() {
             val fileName = "${suraPosition + 1}.txt"
             val inputStream = assetManager.open(fileName)
             val text = inputStream.bufferedReader().use { it.readText() }
-            contents.add(text)
+            val lines = text.trim().split("\n")
+            contents = lines
         } catch (e: IOException) {
             e.printStackTrace()
         }
