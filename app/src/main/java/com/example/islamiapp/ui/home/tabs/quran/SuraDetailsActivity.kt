@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.islamiapp.databinding.ActivitySuraDetailsBinding
+import com.example.islamiapp.ui.Constants
 import java.io.IOException
 
 class SuraDetailsActivity : AppCompatActivity() {
@@ -14,8 +15,8 @@ class SuraDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySuraDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val suraName = intent.getStringExtra("suraName")
-        val suraPosition = intent.getIntExtra("suraPosition", 0)
+        val suraName = intent.getStringExtra(Constants.EXTRA_CHAPTER_NAME)
+        val suraPosition = intent.getIntExtra(Constants.EXTRA_CHAPTER_INDEX, 0)
         binding.suraName.text = "سورة $suraName"
         binding.btnBack.setOnClickListener {
             finish()

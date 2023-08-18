@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.islamiapp.databinding.FragmentQuranBinding
+import com.example.islamiapp.ui.Constants
 
 class QuranFragment : Fragment() {
     private lateinit var binding: FragmentQuranBinding
@@ -147,8 +148,8 @@ class QuranFragment : Fragment() {
         adapter.onItemClickListener = ChapterNamesAdapter.OnItemClickListener { position, name ->
             //start sura details activity and send chapter name and position
             val intent = Intent(context, SuraDetailsActivity::class.java)
-            intent.putExtra("suraName", name)
-            intent.putExtra("suraPosition", position)
+            intent.putExtra(Constants.EXTRA_CHAPTER_INDEX, name)
+            intent.putExtra(Constants.EXTRA_CHAPTER_NAME, position)
             startActivity(intent)
 
         }
