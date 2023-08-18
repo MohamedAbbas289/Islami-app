@@ -24,6 +24,8 @@ class HadethFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        loadHadethFile()
+        bindHadethList()
     }
 
     lateinit var adapter: HadethAdapter
@@ -42,11 +44,6 @@ class HadethFragment : Fragment() {
         startActivity(intent)
     }
 
-    override fun onStart() {
-        super.onStart()
-        loadHadethFile()
-        bindHadethList()
-    }
 
     private fun bindHadethList() {
         adapter.bindItems(hadethList)
