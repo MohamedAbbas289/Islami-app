@@ -80,3 +80,37 @@ Run Android lint with:
 ```
 
 The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`.
+
+## CI/CD
+
+GitHub Actions provides two pipelines:
+
+- `Android CI` runs for pull requests, branch pushes, and manual dispatches. It executes unit tests,
+  Android lint, and a debug build, then uploads the APK and verification reports.
+- `Android Release` runs when a tag matching `v*` is pushed. It repeats verification, builds signed
+  APK and AAB files, generates SHA-256 checksums, and publishes them to a GitHub Release.
+
+Configure these repository Actions secrets before creating a release tag:
+
+| Secret                      | Value                                |
+|-----------------------------|--------------------------------------|
+| `ANDROID_KEYSTORE_BASE64`   | Base64-encoded release keystore file |
+| `ANDROID_KEYSTORE_PASSWORD` | Keystore password                    |
+| `ANDROID_KEY_ALIAS`         | Signing key alias                    |
+| `ANDROID_KEY_PASSWORD`      | Signing key password                 |
+
+On PowerShell, encode an existing keystore and copy it to the clipboard with:
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("release.jks")) | Set-Clipboard
+```
+
+After adding the secrets, publish a release by pushing a version tag:
+
+```powershell
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+Release signing is enabled only when all four environment variables are present. Local debug builds
+and unsigned local release builds continue to work without a keystore.
