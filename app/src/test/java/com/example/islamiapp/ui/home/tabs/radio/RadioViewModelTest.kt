@@ -4,6 +4,7 @@ import com.example.islamiapp.domain.model.RadioPlaybackState
 import com.example.islamiapp.domain.model.RadioStation
 import com.example.islamiapp.domain.player.RadioPlayer
 import com.example.islamiapp.domain.repository.RadioRepository
+import com.example.islamiapp.domain.usecase.SearchRadioStationsUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +34,8 @@ class RadioViewModelTest {
                 repository = object : RadioRepository {
                     override suspend fun getStations(): List<RadioStation> = stations
                 },
-                player = player
+                player = player,
+                searchRadioStations = SearchRadioStationsUseCase()
             )
             advanceUntilIdle()
 
@@ -48,6 +50,32 @@ class RadioViewModelTest {
 
             assertEquals(stations[1], viewModel.state.value.currentStation)
             assertEquals(stations[1], player.playedStations.single())
+        } finally {
+            Dispatchers.resetMain()
+        }
+    }
+
+    @Test
+    fun `station search filters Arabic reader names and keeps source list intact`() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        try {
+            val stations = listOf(
+                station(id = 1, name = "إذاعة الشيخ محمود خليل الحصري"),
+                station(id = 2, name = "إذاعة الشيخ عبد الباسط")
+            )
+            val viewModel = RadioViewModel(
+                repository = object : RadioRepository {
+                    override suspend fun getStations(): List<RadioStation> = stations
+                },
+                player = FakeRadioPlayer(),
+                searchRadioStations = SearchRadioStationsUseCase()
+            )
+            advanceUntilIdle()
+
+            viewModel.updateStationSearchQuery("الحُصَرِى")
+
+            assertEquals(listOf(stations[0]), viewModel.state.value.stationSearchResults)
+            assertEquals(stations, viewModel.state.value.stations)
         } finally {
             Dispatchers.resetMain()
         }

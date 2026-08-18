@@ -13,4 +13,5 @@
     <color name="counter_background">#182139</color>
     <color name="error_color">#FFB4AB</color>
     <color name="verse_number_color">#FFD54F</color>
+    <color name="verse_search_highlight">#40FFCA1A</color>
 </resources>
