@@ -13,6 +13,8 @@ import com.example.islamiapp.domain.repository.HadethRepository
 import com.example.islamiapp.domain.repository.QuranRepository
 import com.example.islamiapp.domain.repository.RadioRepository
 import com.example.islamiapp.domain.repository.ThemeRepository
+import com.example.islamiapp.domain.usecase.SearchQuranVersesUseCase
+import com.example.islamiapp.domain.usecase.SearchRadioStationsUseCase
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -22,6 +24,8 @@ interface AppContainer {
     val radioRepository: RadioRepository
     val themeRepository: ThemeRepository
     val radioPlayer: RadioPlayer
+    val searchQuranVerses: SearchQuranVersesUseCase
+    val searchRadioStations: SearchRadioStationsUseCase
 }
 
 class DefaultAppContainer(context: Context) : AppContainer {
@@ -40,6 +44,10 @@ class DefaultAppContainer(context: Context) : AppContainer {
         appContext.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
     )
     override val radioPlayer: RadioPlayer by lazy { Media3RadioPlayer(appContext) }
+    override val searchQuranVerses: SearchQuranVersesUseCase by lazy {
+        SearchQuranVersesUseCase(quranRepository)
+    }
+    override val searchRadioStations: SearchRadioStationsUseCase = SearchRadioStationsUseCase()
 
     private companion object {
         const val PREFERENCES_NAME = "islami_preferences"

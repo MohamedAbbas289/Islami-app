@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.islamiapp.R
+import com.example.islamiapp.databinding.DialogRadioStationPickerBinding
 import com.example.islamiapp.databinding.FragmentRadioBinding
 import com.example.islamiapp.ui.common.ViewModelFactory
 import com.example.islamiapp.ui.common.appContainer
@@ -23,7 +25,11 @@ class RadioFragment : Fragment() {
     private val viewModel: RadioViewModel by viewModels {
         ViewModelFactory {
             val container = requireContext().appContainer
-            RadioViewModel(container.radioRepository, container.radioPlayer)
+            RadioViewModel(
+                repository = container.radioRepository,
+                player = container.radioPlayer,
+                searchRadioStations = container.searchRadioStations
+            )
         }
     }
 
@@ -48,18 +54,41 @@ class RadioFragment : Fragment() {
     }
 
     private fun showStationPicker() {
-        val state = viewModel.state.value
-        if (state.stations.isEmpty()) return
+        if (viewModel.state.value.stations.isEmpty()) return
 
-        val stationNames = state.stations.map { it.name }.toTypedArray()
-        MaterialAlertDialogBuilder(requireContext())
+        viewModel.updateStationSearchQuery("")
+        val pickerBinding = DialogRadioStationPickerBinding.inflate(layoutInflater)
+        lateinit var dialog: androidx.appcompat.app.AlertDialog
+        val adapter = RadioStationPickerAdapter { station ->
+            viewModel.selectStation(station)
+            dialog.dismiss()
+        }
+        pickerBinding.stationsRecyclerView.adapter = adapter
+
+        fun renderSearchResults() {
+            val state = viewModel.state.value
+            adapter.selectStation(state.currentStation?.id)
+            adapter.submitList(state.stationSearchResults)
+            pickerBinding.stationsRecyclerView.isVisible = state.stationSearchResults.isNotEmpty()
+            pickerBinding.emptySearchText.isVisible = state.stationSearchResults.isEmpty()
+        }
+
+        pickerBinding.stationSearchInput.doAfterTextChanged { text ->
+            viewModel.updateStationSearchQuery(text?.toString().orEmpty())
+            renderSearchResults()
+        }
+
+        dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.choose_radio_station)
-            .setSingleChoiceItems(stationNames, state.currentIndex) { dialog, selectedIndex ->
-                viewModel.selectStation(selectedIndex)
-                dialog.dismiss()
-            }
+            .setView(pickerBinding.root)
             .setNegativeButton(android.R.string.cancel, null)
-            .show()
+            .create()
+        dialog.setOnDismissListener {
+            pickerBinding.stationsRecyclerView.adapter = null
+            viewModel.updateStationSearchQuery("")
+        }
+        renderSearchResults()
+        dialog.show()
     }
 
     private fun observeState() {

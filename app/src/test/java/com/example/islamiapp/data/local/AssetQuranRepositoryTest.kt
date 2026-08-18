@@ -28,9 +28,27 @@ class AssetQuranRepositoryTest {
         )
     }
 
+    @Test
+    fun `verse search ignores Arabic diacritics and returns chapter location`() = runTest {
+        val repository = AssetQuranRepository(
+            assetReader = FakeAssetReader(
+                mapOf(
+                    "1.txt" to "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ\nالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+                    "108.txt" to "إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ"
+                )
+            )
+        )
+
+        val results = repository.searchVerses(query = "انا اعطيناك الكوثر", limit = 10)
+
+        assertEquals(1, results.size)
+        assertEquals("الكوثر", results.single().chapter.name)
+        assertEquals(1, results.single().verse.number)
+    }
+
     private class FakeAssetReader(
         private val assets: Map<String, String>
     ) : AssetReader {
-        override suspend fun readText(fileName: String): String = requireNotNull(assets[fileName])
+        override suspend fun readText(fileName: String): String = assets[fileName].orEmpty()
     }
 }

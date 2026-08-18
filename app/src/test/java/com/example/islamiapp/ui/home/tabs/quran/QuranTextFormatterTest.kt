@@ -33,5 +33,9 @@ class QuranTextFormatterTest {
             listOf("﴿١﴾", "﴿١٢﴾"),
             result.verseNumberRanges.map { result.text.substring(it) }
         )
+        assertEquals(
+            "الآية الثانية ﴿١٢﴾",
+            result.text.substring(requireNotNull(result.verseRanges[12]))
+        )
     }
 }

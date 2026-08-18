@@ -20,6 +20,10 @@ class SuraDetailsActivity : AppCompatActivity() {
     private val chapterNumber by lazy {
         intent.getIntExtra(Constants.EXTRA_CHAPTER_NUMBER, INVALID_CHAPTER)
     }
+    private val targetVerseNumber by lazy {
+        intent.getIntExtra(Constants.EXTRA_VERSE_NUMBER, INVALID_VERSE)
+    }
+    private var hasScrolledToTargetVerse = false
     private val viewModel: SuraDetailsViewModel by viewModels {
         ViewModelFactory {
             SuraDetailsViewModel(chapterNumber, appContainer.quranRepository)
@@ -55,13 +59,38 @@ class SuraDetailsActivity : AppCompatActivity() {
         contentScroll.isVisible = !state.isLoading && state.errorMessage == null
         errorGroup.isVisible = state.errorMessage != null
         errorText.text = state.errorMessage
+        val formattedText = QuranTextFormatter.formatWithVerseNumberRanges(state.verses)
         suraContent.text = QuranVerseNumberStyler.style(
-            formattedText = QuranTextFormatter.formatWithVerseNumberRanges(state.verses),
-            color = ContextCompat.getColor(this@SuraDetailsActivity, R.color.verse_number_color)
+            formattedText = formattedText,
+            numberColor = ContextCompat.getColor(
+                this@SuraDetailsActivity,
+                R.color.verse_number_color
+            ),
+            highlightedVerseNumber = targetVerseNumber.takeIf { it != INVALID_VERSE },
+            highlightColor = ContextCompat.getColor(
+                this@SuraDetailsActivity,
+                R.color.verse_search_highlight
+            )
         )
+        scrollToTargetVerse(formattedText)
+    }
+
+    private fun scrollToTargetVerse(formattedText: FormattedQuranText) {
+        if (hasScrolledToTargetVerse || targetVerseNumber == INVALID_VERSE) return
+        val targetRange = formattedText.verseRanges[targetVerseNumber] ?: return
+        hasScrolledToTargetVerse = true
+
+        binding.suraContent.post {
+            val textLayout = binding.suraContent.layout ?: return@post
+            val targetLine = textLayout.getLineForOffset(targetRange.first)
+            val targetTop = textLayout.getLineTop(targetLine)
+            val topPadding = (24 * resources.displayMetrics.density).toInt()
+            binding.contentScroll.smoothScrollTo(0, (targetTop - topPadding).coerceAtLeast(0))
+        }
     }
 
     private companion object {
         const val INVALID_CHAPTER = -1
+        const val INVALID_VERSE = -1
     }
 }

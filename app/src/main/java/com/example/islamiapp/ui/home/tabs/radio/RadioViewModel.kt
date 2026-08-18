@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.islamiapp.domain.model.RadioStation
 import com.example.islamiapp.domain.player.RadioPlayer
 import com.example.islamiapp.domain.repository.RadioRepository
+import com.example.islamiapp.domain.usecase.SearchRadioStationsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +14,8 @@ import kotlinx.coroutines.launch
 data class RadioUiState(
     val isLoading: Boolean = true,
     val stations: List<RadioStation> = emptyList(),
+    val stationSearchQuery: String = "",
+    val stationSearchResults: List<RadioStation> = emptyList(),
     val currentIndex: Int = 0,
     val isPlaying: Boolean = false,
     val isBuffering: Boolean = false,
@@ -25,7 +28,8 @@ data class RadioUiState(
 
 class RadioViewModel(
     private val repository: RadioRepository,
-    private val player: RadioPlayer
+    private val player: RadioPlayer,
+    private val searchRadioStations: SearchRadioStationsUseCase
 ) : ViewModel() {
     private val mutableState = MutableStateFlow(RadioUiState())
     val state: StateFlow<RadioUiState> = mutableState.asStateFlow()
@@ -44,6 +48,7 @@ class RadioViewModel(
                         mutableState.value = mutableState.value.copy(
                             isLoading = false,
                             stations = emptyList(),
+                            stationSearchResults = emptyList(),
                             loadError = "No radio stations are currently available"
                         )
                     } else {
@@ -53,6 +58,10 @@ class RadioViewModel(
                         mutableState.value = mutableState.value.copy(
                             isLoading = false,
                             stations = stations,
+                            stationSearchResults = searchRadioStations(
+                                stations = stations,
+                                query = mutableState.value.stationSearchQuery
+                            ),
                             currentIndex = activeIndex,
                             loadError = null
                         )
@@ -80,6 +89,19 @@ class RadioViewModel(
     fun nextStation() = moveStation(offset = 1)
 
     fun previousStation() = moveStation(offset = -1)
+
+    fun updateStationSearchQuery(query: String) {
+        val current = mutableState.value
+        mutableState.value = current.copy(
+            stationSearchQuery = query,
+            stationSearchResults = searchRadioStations(current.stations, query)
+        )
+    }
+
+    fun selectStation(station: RadioStation) {
+        val index = mutableState.value.stations.indexOfFirst { it.id == station.id }
+        if (index >= 0) selectStation(index)
+    }
 
     fun selectStation(index: Int) {
         val current = mutableState.value

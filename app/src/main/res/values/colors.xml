@@ -13,5 +13,6 @@
     <color name="counter_background">#91B7935F</color>
     <color name="error_color">#B3261E</color>
     <color name="verse_number_color">#8A5A16</color>
+    <color name="verse_search_highlight">#40B7935F</color>
     <color name="launcher_background">#101729</color>
 </resources>
