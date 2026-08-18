@@ -5,154 +5,69 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.islamiapp.databinding.FragmentQuranBinding
+import com.example.islamiapp.domain.model.QuranChapter
 import com.example.islamiapp.ui.Constants
+import com.example.islamiapp.ui.common.ViewModelFactory
+import com.example.islamiapp.ui.common.appContainer
+import kotlinx.coroutines.launch
 
 class QuranFragment : Fragment() {
-    private lateinit var binding: FragmentQuranBinding
-    var names = listOf(
-        "الفاتحه",
-        "البقرة",
-        "آل عمران",
-        "النساء",
-        "المائدة",
-        "الأنعام",
-        "الأعراف",
-        "الأنفال",
-        "التوبة",
-        "يونس",
-        "هود",
-        "يوسف",
-        "الرعد",
-        "إبراهيم",
-        "الحجر",
-        "النحل",
-        "الإسراء",
-        "الكهف",
-        "مريم",
-        "طه",
-        "الأنبياء",
-        "الحج",
-        "المؤمنون",
-        "النّور",
-        "الفرقان",
-        "الشعراء",
-        "النّمل",
-        "القصص",
-        "العنكبوت",
-        "الرّوم",
-        "لقمان",
-        "السجدة",
-        "الأحزاب",
-        "سبأ",
-        "فاطر",
-        "يس",
-        "الصافات",
-        "ص",
-        "الزمر",
-        "غافر",
-        "فصّلت",
-        "الشورى",
-        "الزخرف",
-        "الدّخان",
-        "الجاثية",
-        "الأحقاف",
-        "محمد",
-        "الفتح",
-        "الحجرات",
-        "ق",
-        "الذاريات",
-        "الطور",
-        "النجم",
-        "القمر",
-        "الرحمن",
-        "الواقعة",
-        "الحديد",
-        "المجادلة",
-        "الحشر",
-        "الممتحنة",
-        "الصف",
-        "الجمعة",
-        "المنافقون",
-        "التغابن",
-        "الطلاق",
-        "التحريم",
-        "الملك",
-        "القلم",
-        "الحاقة",
-        "المعارج",
-        "نوح",
-        "الجن",
-        "المزّمّل",
-        "المدّثر",
-        "القيامة",
-        "الإنسان",
-        "المرسلات",
-        "النبأ",
-        "النازعات",
-        "عبس",
-        "التكوير",
-        "الإنفطار",
-        "المطفّفين",
-        "الإنشقاق",
-        "البروج",
-        "الطارق",
-        "الأعلى",
-        "الغاشية",
-        "الفجر",
-        "البلد",
-        "الشمس",
-        "الليل",
-        "الضحى",
-        "الشرح",
-        "التين",
-        "العلق",
-        "القدر",
-        "البينة",
-        "الزلزلة",
-        "العاديات",
-        "القارعة",
-        "التكاثر",
-        "العصر",
-        "الهمزة",
-        "الفيل",
-        "قريش",
-        "الماعون",
-        "الكوثر",
-        "الكافرون",
-        "النصر",
-        "المسد",
-        "الإخلاص",
-        "الفلق",
-        "الناس"
-    )
+    private var _binding: FragmentQuranBinding? = null
+    private val binding get() = requireNotNull(_binding)
+    private val viewModel: QuranViewModel by viewModels {
+        ViewModelFactory { QuranViewModel(requireContext().appContainer.quranRepository) }
+    }
+    private val adapter = ChapterNamesAdapter(::showSuraDetails)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentQuranBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentQuranBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initRecyclerView()
+        binding.recyclerView.adapter = adapter
+        binding.retryButton.setOnClickListener { viewModel.loadChapters() }
+        observeState()
     }
 
-    lateinit var adapter: ChapterNamesAdapter
-    private fun initRecyclerView() {
-        adapter = ChapterNamesAdapter(names)
-        adapter.onItemClickListener = ChapterNamesAdapter.OnItemClickListener { position, name ->
-            //start sura details activity and send chapter name and position
-            val intent = Intent(context, SuraDetailsActivity::class.java)
-            intent.putExtra(Constants.EXTRA_CHAPTER_NAME, name)
-            intent.putExtra(Constants.EXTRA_CHAPTER_INDEX, position)
-            startActivity(intent)
-
+    private fun observeState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect(::render)
+            }
         }
-        binding.recyclerView.adapter = adapter
+    }
+
+    private fun render(state: QuranUiState) = with(binding) {
+        progressBar.isVisible = state.isLoading
+        recyclerView.isVisible = !state.isLoading && state.errorMessage == null
+        errorGroup.isVisible = state.errorMessage != null
+        errorText.text = state.errorMessage
+        adapter.submitList(state.chapters)
+    }
+
+    private fun showSuraDetails(chapter: QuranChapter) {
+        startActivity(Intent(requireContext(), SuraDetailsActivity::class.java).apply {
+            putExtra(Constants.EXTRA_CHAPTER_NAME, chapter.name)
+            putExtra(Constants.EXTRA_CHAPTER_NUMBER, chapter.number)
+        })
+    }
+
+    override fun onDestroyView() {
+        binding.recyclerView.adapter = null
+        _binding = null
+        super.onDestroyView()
     }
 }

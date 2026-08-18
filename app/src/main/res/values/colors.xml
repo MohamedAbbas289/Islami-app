@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#242424</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="transparent">#00F44336</color>
+    <color name="transparent">#00000000</color>
     <color name="colorPrimary">#B7935F</color>
+    <color name="screen_background">#FFFDF9</color>
+    <color name="on_background">#242424</color>
+    <color name="surface">#FFFFFFFF</color>
+    <color name="surface_overlay">#E8FFFFFF</color>
+    <color name="navigation_background">#B7935F</color>
+    <color name="navigation_selected">#242424</color>
+    <color name="navigation_unselected">#FFFFFFFF</color>
+    <color name="accent">#B7935F</color>
+    <color name="counter_background">#91B7935F</color>
+    <color name="error_color">#B3261E</color>
+    <color name="verse_number_color">#8A5A16</color>
+    <color name="launcher_background">#101729</color>
 </resources>

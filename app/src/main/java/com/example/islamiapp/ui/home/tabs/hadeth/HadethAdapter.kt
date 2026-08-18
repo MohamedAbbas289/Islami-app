@@ -2,12 +2,15 @@ package com.example.islamiapp.ui.home.tabs.hadeth
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.islamiapp.databinding.ItemHadethBinding
-import com.example.islamiapp.model.Hadeth
+import com.example.islamiapp.domain.model.Hadeth
 
-class HadethAdapter(private var ahadeth: List<Hadeth>?) :
-    RecyclerView.Adapter<HadethAdapter.ViewHolder>() {
+class HadethAdapter(
+    private val onItemClick: (Hadeth) -> Unit
+) : ListAdapter<Hadeth, HadethAdapter.ViewHolder>(DiffCallback) {
     class ViewHolder(val binding: ItemHadethBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -16,28 +19,19 @@ class HadethAdapter(private var ahadeth: List<Hadeth>?) :
         return ViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = ahadeth?.size ?: 0
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        with(holder) {
-            val hadeth: Hadeth = ahadeth!![position]
-            binding.title.text = hadeth.title
-            if (onItemClickListener != null) {
-                binding.root.setOnClickListener {
-                    onItemClickListener?.onItemClick(position, hadeth)
-                }
-            }
+        val hadeth = getItem(position)
+        holder.binding.title.text = hadeth.title
+        holder.binding.root.setOnClickListener {
+            onItemClick(hadeth)
         }
     }
 
-    fun bindItems(newList: List<Hadeth>) {
-        ahadeth = newList
-        notifyDataSetChanged()
-    }
+    private object DiffCallback : DiffUtil.ItemCallback<Hadeth>() {
+        override fun areItemsTheSame(oldItem: Hadeth, newItem: Hadeth): Boolean =
+            oldItem.id == newItem.id
 
-    var onItemClickListener: OnItemClickListener? = null
-
-    fun interface OnItemClickListener {
-        fun onItemClick(position: Int, hadeth: Hadeth)
+        override fun areContentsTheSame(oldItem: Hadeth, newItem: Hadeth): Boolean =
+            oldItem == newItem
     }
 }

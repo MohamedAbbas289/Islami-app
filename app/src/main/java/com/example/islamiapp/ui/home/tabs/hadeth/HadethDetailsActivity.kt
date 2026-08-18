@@ -1,40 +1,60 @@
 package com.example.islamiapp.ui.home.tabs.hadeth
 
-import android.os.Build
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.islamiapp.databinding.ActivityHadethDetailsBinding
-import com.example.islamiapp.model.Hadeth
 import com.example.islamiapp.ui.Constants
+import com.example.islamiapp.ui.common.ViewModelFactory
+import com.example.islamiapp.ui.common.appContainer
+import kotlinx.coroutines.launch
 
 class HadethDetailsActivity : AppCompatActivity() {
-    lateinit var binding: ActivityHadethDetailsBinding
+    private lateinit var binding: ActivityHadethDetailsBinding
+    private val hadethId by lazy {
+        intent.getIntExtra(Constants.EXTRA_HADETH_ID, INVALID_HADETH)
+    }
+    private val viewModel: HadethDetailsViewModel by viewModels {
+        ViewModelFactory {
+            HadethDetailsViewModel(hadethId, appContainer.hadethRepository)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (hadethId == INVALID_HADETH) {
+            finish()
+            return
+        }
         binding = ActivityHadethDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initView()
-        initParams()
-        bindHadeth()
+        binding.btnBack.setOnClickListener { finish() }
+        binding.retryButton.setOnClickListener { viewModel.loadHadeth() }
+        observeState()
     }
 
-    private fun initView() {
-        binding.btnBack.setOnClickListener {
-            finish()
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect(::render)
+            }
         }
     }
 
-    private fun bindHadeth() {
-        binding.hadethName.text = hadeth?.title
-        binding.hadethContent.text = hadeth?.content
+    private fun render(state: HadethDetailsUiState) = with(binding) {
+        progressBar.isVisible = state.isLoading
+        contentGroup.isVisible = state.hadeth != null
+        errorGroup.isVisible = state.errorMessage != null
+        errorText.text = state.errorMessage
+        hadethName.text = state.hadeth?.title
+        hadethContent.text = state.hadeth?.content
     }
 
-    var hadeth: Hadeth? = null
-    private fun initParams() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            hadeth = intent.getParcelableExtra(Constants.EXTRA_HADETH, Hadeth::class.java)
-        } else {
-            hadeth = intent.getParcelableExtra(Constants.EXTRA_HADETH) as Hadeth?
-        }
+    private companion object {
+        const val INVALID_HADETH = -1
     }
 }

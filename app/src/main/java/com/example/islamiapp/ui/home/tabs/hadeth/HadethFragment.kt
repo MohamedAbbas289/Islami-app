@@ -5,63 +5,68 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.islamiapp.databinding.FragmentHadethBinding
-import com.example.islamiapp.model.Hadeth
+import com.example.islamiapp.domain.model.Hadeth
 import com.example.islamiapp.ui.Constants
+import com.example.islamiapp.ui.common.ViewModelFactory
+import com.example.islamiapp.ui.common.appContainer
+import kotlinx.coroutines.launch
 
 class HadethFragment : Fragment() {
-    private lateinit var binding: FragmentHadethBinding
+    private var _binding: FragmentHadethBinding? = null
+    private val binding get() = requireNotNull(_binding)
+    private val viewModel: HadethViewModel by viewModels {
+        ViewModelFactory { HadethViewModel(requireContext().appContainer.hadethRepository) }
+    }
+    private val adapter = HadethAdapter(::showHadethDetails)
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentHadethBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentHadethBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
-        loadHadethFile()
-        bindHadethList()
+        binding.recyclerView.adapter = adapter
+        binding.retryButton.setOnClickListener { viewModel.loadHadeths() }
+        observeState()
     }
 
-    lateinit var adapter: HadethAdapter
-    private fun initViews() {
-        adapter = HadethAdapter(null)
-        adapter.onItemClickListener = HadethAdapter.OnItemClickListener { position, hadeth ->
-            showHadethDetails(hadeth)
+    private fun observeState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect(::render)
+            }
         }
-        binding.recyclerView.adapter = adapter
+    }
 
+    private fun render(state: HadethUiState) = with(binding) {
+        progressBar.isVisible = state.isLoading
+        recyclerView.isVisible = !state.isLoading && state.errorMessage == null
+        errorGroup.isVisible = state.errorMessage != null
+        errorText.text = state.errorMessage
+        adapter.submitList(state.hadeths)
     }
 
     private fun showHadethDetails(hadeth: Hadeth) {
-        val intent = Intent(activity, HadethDetailsActivity::class.java)
-        intent.putExtra(Constants.EXTRA_HADETH, hadeth)
-        startActivity(intent)
+        startActivity(Intent(requireContext(), HadethDetailsActivity::class.java).apply {
+            putExtra(Constants.EXTRA_HADETH_ID, hadeth.id)
+        })
     }
 
-
-    private fun bindHadethList() {
-        adapter.bindItems(hadethList)
-    }
-
-    val hadethList = mutableListOf<Hadeth>()
-    private fun loadHadethFile() {
-        val assetManager = requireActivity().assets
-        val fileName = "ahadeth.txt"
-        val inputStream = assetManager.open(fileName)
-        val fileContent = inputStream.bufferedReader().use { it.readText() }
-        val singleHadethList = fileContent.trim().split("#")
-        singleHadethList.forEach { element ->
-            val lines = element.trim().split("\n")
-            val title = lines[0]
-            val content = lines.joinToString("\n")
-            val hadeth = Hadeth(title, content)
-            hadethList.add(hadeth)
-        }
+    override fun onDestroyView() {
+        binding.recyclerView.adapter = null
+        _binding = null
+        super.onDestroyView()
     }
 }

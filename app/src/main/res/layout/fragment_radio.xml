@@ -1,61 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
-    tools:background="@drawable/default_bg">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/radio_img"
-        android:layout_width="match_parent"
-        android:layout_height="222dp"
-        android:src="@drawable/radio_image"
+    <LinearLayout
+        android:id="@+id/radio_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.35" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tv_radio"
+        <ImageView
+            android:id="@+id/radio_img"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/content_description_radio"
+            android:scaleType="centerInside"
+            android:src="@drawable/radio_image" />
+
+        <TextView
+            android:id="@+id/station_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:contentDescription="@string/select_radio_station"
+            android:drawableEnd="@drawable/ic_expand_more"
+            android:drawablePadding="8dp"
+            android:ellipsize="end"
+            android:focusable="true"
+            android:fontFamily="@font/el_messiri"
+            android:gravity="center"
+            android:maxLines="3"
+            android:minHeight="70dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp"
+            android:textColor="@color/on_background"
+            android:textDirection="rtl"
+            android:textSize="23sp"
+            tools:text="إذاعة القرآن الكريم - السعودية" />
+
+        <TextView
+            android:id="@+id/station_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/on_background"
+            android:textSize="15sp"
+            tools:text="المحطة 1 من 150" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/previous_button"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/previous_station"
+                android:padding="16dp"
+                android:src="@drawable/radio_skip_previous" />
+
+            <FrameLayout
+                android:layout_width="72dp"
+                android:layout_height="72dp">
+
+                <ImageButton
+                    android:id="@+id/play_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/play_radio"
+                    android:padding="16dp"
+                    android:src="@drawable/radio_play" />
+
+                <ProgressBar
+                    android:id="@+id/buffering_indicator"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <ImageButton
+                android:id="@+id/next_button"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/next_station"
+                android:padding="16dp"
+                android:src="@drawable/radio_skip_next" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/playback_error_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/playback_error_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/error_color"
+                android:textSize="14sp"
+                tools:text="تعذر تشغيل المحطة" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/playback_retry_button"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/retry" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="59dp"
-        android:fontFamily="@font/el_messiri"
-        android:text="إذاعة القرآن الكريم"
-        android:textColor="@color/black"
-        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/radio_img" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:layout_width="31dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="65dp"
-        android:src="@drawable/radio_play"
+    <LinearLayout
+        android:id="@+id/error_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_radio" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:layout_width="31dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="65dp"
-        android:src="@drawable/radio_skip_next"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.7"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_radio" />
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:gravity="center"
+            android:textColor="@color/error_color"
+            android:textSize="16sp"
+            tools:text="Unable to load radio stations" />
 
-    <ImageView
-        android:layout_width="31dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="65dp"
-        android:src="@drawable/radio_skip_previous"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_radio" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/retry_button"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/retry" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

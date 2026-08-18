@@ -2,57 +2,55 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
-    tools:background="@drawable/default_bg">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/sebha_head"
-        android:layout_width="73dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_width="72dp"
+        android:layout_height="100dp"
         android:adjustViewBounds="true"
+        android:contentDescription="@null"
         android:src="@drawable/head_sebha_logo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintHorizontal_bias="0.59"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/sebha_body"
-        android:layout_width="232dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
         android:adjustViewBounds="true"
+        android:contentDescription="@string/content_description_tasbeh"
         android:src="@drawable/body_sebha_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/sebha_head" />
 
     <TextView
         android:id="@+id/tv_numberOfSebha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/el_messiri"
-        android:text="عدد التسبيحات"
-        android:textColor="@color/black"
-        android:textSize="25sp"
+        android:text="@string/number_of_tasbeh"
+        android:textColor="@color/on_background"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sebha_body" />
 
     <TextView
         android:id="@+id/counter"
-        android:layout_width="69dp"
-        android:layout_height="81dp"
-        android:layout_marginTop="34dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/rounded_corner"
         android:fontFamily="@font/monotype_koufi"
         android:gravity="center"
-        android:text="0"
-        android:textColor="@color/black"
-        android:textSize="25sp"
+        android:text="@string/zero"
+        android:textColor="@color/on_background"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,14 +60,17 @@
         android:id="@+id/sebha_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/monotype_koufi"
-        android:text="سبحان الله"
-        android:textSize="25sp"
+        android:minWidth="190dp"
+        android:text="@string/tasbeh_subhan_allah"
+        android:textSize="22sp"
         android:textStyle="bold"
-        app:cornerRadius="25dp"
+        app:backgroundTint="@color/accent"
+        app:cornerRadius="28dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/counter" />
+        app:layout_constraintTop_toBottomOf="@id/counter"
+        app:rippleColor="@color/surface" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
