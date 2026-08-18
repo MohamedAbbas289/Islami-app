@@ -41,11 +41,8 @@ jobs:
             platforms;android-33
             build-tools;33.0.1
 
-      - name: Make Gradle wrapper executable
-        run: chmod +x gradlew
-
       - name: Verify debug build
-        run: ./gradlew --no-daemon --stacktrace testDebugUnitTest lintDebug assembleDebug
+        run: bash ./gradlew --no-daemon --stacktrace testDebugUnitTest lintDebug assembleDebug
 
       - name: Upload verification reports
         if: always()
