@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="transparent">#00000000</color>
+    <color name="colorPrimary">#FFCA1A</color>
+    <color name="screen_background">#101729</color>
+    <color name="on_background">#F7F8FC</color>
+    <color name="surface">#182139</color>
+    <color name="surface_overlay">#E8182139</color>
+    <color name="navigation_background">#141D35</color>
+    <color name="navigation_selected">#FFCA1A</color>
+    <color name="navigation_unselected">#F7F8FC</color>
+    <color name="accent">#FFCA1A</color>
+    <color name="counter_background">#182139</color>
+    <color name="error_color">#FFB4AB</color>
+    <color name="verse_number_color">#FFD54F</color>
+</resources>
